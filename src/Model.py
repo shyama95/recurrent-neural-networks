@@ -9,6 +9,11 @@ class Model:
     D = 1
     isTrain = False
 
+    def __init__(self, n_layers=1, h=H, is_train=False):
+        self.nLayers = n_layers
+        self.H = h
+        self.isTrain = is_train
+
     def forward(self, input):
         ...
         output = []
