@@ -7,17 +7,21 @@ class RNN:
     Whh = []
     Wxh = []
     Why = []
+    bias = []
     h = []
-    y = []
+    output = 0
     V = 153
     H = 64
 
     def __init__(self, h, v):
         self.H = h
         self.V = v
-        self.Whh = np.random.rand(h, h) * 0.01
-        self.Wxh = np.random.rand(h, v) * 0.01
-        self.Why = np.random.rand(1, h) * 0.01
+        range_low = -np.sqrt(1/self.V)
+        range_high = np.sqrt(1 / self.V)
+        self.Whh = np.random.uniform(range_low, range_high, (h, h))
+        self.Wxh = np.random.uniform(range_low, range_high, (h, v))
+        self.Why = np.random.uniform(range_low, range_high, (1, h))
+        self.bias = np.random.uniform(range_low, range_high)
 
     def forward(self, input):
         self.h = np.zeros(self.H, dtype=float)
@@ -26,8 +30,8 @@ class RNN:
             x = self.input_layer(inp)
             self.next_state(x)
 
-        self.compute_y()
-        return self.y
+        self.compute_output()
+        return self.output
 
     def backward(self):
         ...
@@ -39,10 +43,15 @@ class RNN:
     def next_state(self, x):
         self.h = np.tanh(np.dot(self.Whh, self.h) + np.dot(self.Wxh, x))
 
-    def compute_y(self):
-        self.y = np.dot(self.Why, self.h)
+    def compute_output(self):
+        y = np.dot(self.Why, self.h) + self.bias
+        output = self.sigmoid(y)
+        self.output = 0 if output < 0.5 else 1
 
     def input_layer(self, input):
         x = np.zeros(self.V)
         x[symbol_table.index(int(input))] = 1
         return x
+
+    def sigmoid(self, x):
+        return 1/(1+np.exp(-x))
