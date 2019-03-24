@@ -14,11 +14,8 @@ class Model:
         self.H = h
         self.isTrain = is_train
 
-    def forward(self, input):
+    def forward(self):
         ...
-        output = []
-        return output
 
     def backward(self):
         ...
-        # Sequentially calls the backward function for the layers contained in the model

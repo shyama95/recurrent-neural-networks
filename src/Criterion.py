@@ -1,5 +1,4 @@
 # implements the cross-entropy loss function
-
 class Criterion:
     def forward(self, input, target):
         ...

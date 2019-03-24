@@ -37,13 +37,15 @@ class RNN:
         return self.output
 
     def backward(self, input, target):
-        N = 10
-        eta = 0.001
+        N = 25
+        eta = 0.01
         initial_loss = self.total_loss(input, target)
+        isUpdated = False
         for epoch in range(N):
             j = 0
             print('Epoch : ' + str(epoch + 1))
             print('Initial loss = ' + str(initial_loss))
+            print('Learning rate : ' + str(eta))
 
             Wxh = self.Wxh.copy()
             Whh = self.Whh.copy()
@@ -63,15 +65,20 @@ class RNN:
 
             new_loss = self.total_loss(input, target)
 
-            if new_loss > initial_loss:
+            if new_loss >= initial_loss and not isUpdated:
                 self.Wxh = Wxh
                 self.Whh = Whh
                 self.Why = Why
                 self.bias = bias
-                print('Loss set to : ' + str(self.total_loss(input, target)))
-                break
+                if eta < 1e-6:
+                    print('Loss set to : ' + str(self.total_loss(input, target)))
+                    break
+                else:
+                    eta = eta / 10
+                    isUpdated = True
             else:
                 initial_loss = new_loss
+                isUpdated = False
 
         return [self.Wxh, self.Whh, self.Why, self.bias]
 
